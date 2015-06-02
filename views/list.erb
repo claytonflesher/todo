@@ -1,0 +1,7 @@
+<h1>Stuff CJ Needs To Do</h1>
+
+<ul>
+  <% list.each do |item| %>
+    <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %> added <%= item.created_at.strftime("%c") %></li>
+  <% end %>
+</ul>
