@@ -8,10 +8,17 @@ module Todo
     end
 
     attr_reader :db
-    def save(item)
+    def save_item(item)
       db.transaction do
         db[:list] ||= []
         db[:list].unshift(item)
+      end
+    end
+
+    def save_user(user)
+      db.transaction do
+        db[:users] ||= {}
+        db[:users][user.email] = user
       end
     end
 
@@ -24,6 +31,22 @@ module Todo
     def all
       db.transaction(READ_ONLY) do
         Array(db[:list])
+      end
+    end
+
+    def authenticate(email:, password:)
+      db.transaction(READ_ONLY) do
+        if db[:users].include?(email) && db[:users][email].password == password
+          db[:users][email]
+        else
+          nil
+        end
+      end
+    end
+
+    def load_user(email)
+      db.transaction(READ_ONLY) do
+        db[:users][email]
       end
     end
   end

@@ -1,4 +1,5 @@
 <h1>Dashboard</h1>
+<p>Hello <%= h user.first_name %></p>
 <form id="new_item_form" action="/admin/list" method="POST">
   <% unless item.new? %>
     <p>Your item could not be saved because</p>
