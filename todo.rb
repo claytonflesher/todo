@@ -62,11 +62,15 @@ end
 
 get "/" do
   title = "To Do / Dashboard"
-  if @user.email
-    items = db.all
-    erb :dashboard, locals: {title: title, items: items, item: Todo::Item.new, user: @user}
-  else
+  if @user == nil
     redirect "/login"
+  else
+    if @user.email
+      items = db.all
+      erb :dashboard, locals: {title: title, items: items, item: Todo::Item.new, user: @user}
+    else
+      redirect "/login"
+    end
   end
 end
 
