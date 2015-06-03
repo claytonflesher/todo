@@ -55,7 +55,6 @@ post "/login" do
 end
 
 post "/logout" do
-  title = "To do / Logout"
   session.clear
   redirect "/login"
 end
