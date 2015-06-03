@@ -54,6 +54,12 @@ post "/login" do
   end
 end
 
+post "/logout" do
+  title = "To do / Logout"
+  session.clear
+  redirect "/login"
+end
+
 get "/" do
   title = "To Do / Dashboard"
   if @user.email

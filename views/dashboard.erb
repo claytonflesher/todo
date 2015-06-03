@@ -18,4 +18,6 @@
     <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %>  --added <%= item.created_at.strftime("%c") %>  <button type="delete">Delete</button></li>
   <% end %>
 </ul>
-<button type="logout" action="/logout">Logout</button>
+<form id="logout" action="/logout" method="POST">
+  <input type="submit" value="Logout">
+</form>
