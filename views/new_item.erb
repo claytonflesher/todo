@@ -1,19 +1,15 @@
 <h1>Dashboard</h1>
-<form id="new_item_form" action="/admin/list" method="POST">
+<form id="new_item_form" action="/admin/list" method="Post">
   <% unless item.new? %>
     <p>Your item could not be saved because</p>
     <ul>
       <% item.errors.each do |error| %>
         <li><%= h error %></li>
-      <% end%>
+      <% end %>
     </ul>
-  <% end %>
+  <% end%>
   <input type="text" placeholder="Task" name="task" value="<%= h item.task %>">
   <input type="text" placeholder="Notes" name="notes" value="<%= h item.notes %>">
   <input type="submit" value="Submit">
 </form>
-<ul>
-  <% items.each do |item| %>
-    <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %> added <%= item.created_at.strftime("%c") %></li>
-  <% end %>
-</ul>
+

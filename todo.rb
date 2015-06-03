@@ -11,14 +11,22 @@ end
 
 get "/admin/list/new" do
   title = "To Do / Admin / New Item"
-  erb :dashboard, locals: {title: title, item: Todo::Item.new}
+  items = db.all
+  erb :new_item, locals: {title: title, item: Todo::Item.new}
+end
+
+get "/admin/list" do
+  title = "To Do / Admin"
+  items = db.all
+  erb :dashboard, locals: {title: title, items: items, item: Todo::Item.new}
 end
 
 post "/admin/list" do
   title = "To do / Admin / New Item"
-  item = Blog::Item.new(task: params[:task], notes: param[:notes])
+  item = Todo::Item.new(task: params[:task], notes: params[:notes])
   if item.valid?
     db.save(item)
+    redirect "/admin/list"
   else
     erb :new_item, locals: {title: title, item: item}
   end

@@ -4,7 +4,7 @@ module Todo
   class Database
     READ_ONLY = true
     def initialize
-      @dbm = PStore.new(File.join(__dir__, *%w[.. .. db items.pstore]))
+      @db = PStore.new(File.join(__dir__, *%w[.. .. db items.pstore]))
     end
 
     attr_reader :db
