@@ -1,6 +1,6 @@
 <h1>Dashboard</h1>
 <p>Hello <%= h user.first_name %></p>
-<form id="new_item_form" action="/admin/list" method="POST">
+<form id="new_item_form" action="/" method="POST">
   <% unless item.new? %>
     <p>Your item could not be saved because</p>
     <ul>
@@ -15,6 +15,7 @@
 </form>
 <ul>
   <% items.each do |item| %>
-    <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %> added <%= item.created_at.strftime("%c") %></li>
+    <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %>  --added <%= item.created_at.strftime("%c") %>  <button type="delete">Delete</button></li>
   <% end %>
 </ul>
+<button type="logout" action="/logout">Logout</button>

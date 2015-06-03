@@ -8,16 +8,22 @@ module Todo
     end
 
     attr_reader :db
-    def save_item(item)
+
+    def setup
       db.transaction do
         db[:list] ||= []
+        db[:users] ||= {}
+      end
+    end
+
+    def save_item(item)
+      db.transaction do
         db[:list].unshift(item)
       end
     end
 
     def save_user(user)
       db.transaction do
-        db[:users] ||= {}
         db[:users][user.email] = user
       end
     end
