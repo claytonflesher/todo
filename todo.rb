@@ -13,8 +13,8 @@ helpers do
 end
 
 before do
-  @user = db.load_user(session[:email])
   db.setup
+  @user = db.load_user(session[:email])
 end
 
 get "/sign_up" do
@@ -28,7 +28,7 @@ get "/logout" do
 end
 
 post "/sign_up" do
-  title = "To do /Sign Up"
+  title = "To do / Sign Up"
   user = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
   if user.valid?
     db.save_user(user)
@@ -65,7 +65,7 @@ get "/" do
     redirect "/login"
   else
     if @user.email
-      items = db.all
+      items = @user.list
       erb :dashboard, locals: {title: title, items: items, item: Todo::Item.new, user: @user}
     else
       redirect "/login"
@@ -77,9 +77,17 @@ post "/" do
   title = "To Do / Dashboard"
   item = Todo::Item.new(task: params[:task], notes: params[:notes])
   if item.valid?
-    db.save_item(item)
+    @user.add_task(item)
+    db.save_user(@user)
     redirect "/"
   else
     erb :dashboard, locals: {title: title, item: item}
   end
+end
+
+post "/delete" do
+  item = parems[:item]
+  @user.delete_task(item)
+  db.save_user(@user)
+  redirect "/"
 end

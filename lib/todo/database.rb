@@ -11,32 +11,13 @@ module Todo
 
     def setup
       db.transaction do
-        db[:list] ||= []
         db[:users] ||= {}
-      end
-    end
-
-    def save_item(item)
-      db.transaction do
-        db[:list].unshift(item)
       end
     end
 
     def save_user(user)
       db.transaction do
         db[:users][user.email] = user
-      end
-    end
-
-    def load(slug)
-      db.transaction(READ_ONLY) do
-        db[:list].find { |item| item.slug == slug }
-      end
-    end
-
-    def all
-      db.transaction(READ_ONLY) do
-        Array(db[:list])
       end
     end
 
