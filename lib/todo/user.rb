@@ -1,6 +1,6 @@
 module Todo
   class User
-    def initialize(email: nil, password: nil, first_name: nil, last_name: nil)
+    def initialize(email: "", password: "", first_name: "", last_name: "")
       @email      = email
       @password   = password
       @first_name = first_name
@@ -11,7 +11,23 @@ module Todo
     attr_reader :email, :password, :first_name, :last_name, :list
 
     def valid?
-      email != nil && password != nil && first_name != nil && last_name != nil
+      email != "" && password != "" && first_name != "" && last_name != ""
+    end
+
+    def errors
+      errors = [ ]
+      unless email =~ /\S/
+        errors << "Email can't be blank."
+      end
+      unless password =~ /\S/
+        errors << "Password can't be blank."
+      end
+      unless first_name =~ /\S/
+        errors << "First name can't be blank."
+      end
+      unless last_name =~ /\S/
+        errors << "Last name can't be blank."
+      end
     end
 
     def add_task(item)

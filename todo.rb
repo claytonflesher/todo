@@ -18,24 +18,27 @@ before do
 end
 
 get "/sign_up" do
-  title = "To do / Sign Up"
+  title = "To Do / Sign Up"
   erb :sign_up, locals: {title: title, user: Todo::User.new}
 end
 
-get "/logout" do
-  title = "To do / Logout"
-  erb :logout, locals: {title: title}
-end
-
 post "/sign_up" do
-  title = "To do / Sign Up"
+  title = "To Do / Sign Up"
   user = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
-  if user.valid?
+  p params[:email]
+  if user.valid? && db.load_user(user.email)
+    redirect "/unavailable"
+  elsif user.valid?
     db.save_user(user)
     redirect "/login"
   else
     erb :sign_up, locals: {title: title, user: user}
   end
+end
+
+get "/unavailable" do
+  title = "To Do / Unavailable"
+  erb :unavailable, locals: {title: title}
 end
 
 get "/login" do
@@ -44,7 +47,7 @@ get "/login" do
 end
 
 post "/login" do
-  title = "To do / Login"
+  title = "To Do / Login"
   user = db.authenticate(email: params[:email], password: params[:password])
   if user
     session[:email] = user.email

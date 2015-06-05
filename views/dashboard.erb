@@ -6,7 +6,7 @@
     <ul>
       <% item.errors.each do |error| %>
         <li><%= h error %></li>
-      <% end%>
+      <% end %>
     </ul>
   <% end %>
   <input type="text" placeholder="Task" name="task" value="<%= h item.task %>">

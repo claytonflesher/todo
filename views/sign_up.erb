@@ -1,9 +1,8 @@
 <h1>Sign Up!</h1>
-<form action="/sign_up" method="POST">
+<form id="sign_up_form" action="/sign_up" method="POST">
   <input type="text" placeholder="email" name="email" value="<% h user.email %>"><br>
   <input type="password" placeholder="password" name="password" value="<% h user.password %>"><br>
   <input type="text" placeholder="First Name" name="first_name" value="<% h user.first_name %>"><br>
   <input type="text" placeholder="Last Name" name="last_name" value="<% h user.last_name %>"><br>
   <input type="submit" value="Submit">
 </form>
-
