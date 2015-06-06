@@ -27,10 +27,10 @@ post "/sign_up" do
   user = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
   if user.valid?
     if db.valid?(user.email)
-      erb :sign_up, locals: {title: title, user: user, db: db}
+      db.save_user(user)
+      redirect "/login"
     end
-    db.save_user(user)
-    redirect "/login"
+      erb :sign_up, locals: {title: title, user: user, db: db}
   else
     erb :sign_up, locals: {title: title, user: user, db: db}
   end
