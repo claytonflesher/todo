@@ -63,8 +63,7 @@ get "/" do
     redirect "/login"
   else
     if @user.email
-      items = @user.list
-      erb :dashboard, locals: {title: title, items: items, item: Todo::Item.new, user: @user}
+      erb :dashboard, locals: {title: title, item: Todo::Item.new, user: @user}
     else
       redirect "/login"
     end

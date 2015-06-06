@@ -14,7 +14,7 @@
   <input type="submit" value="Submit">
 </form>
 <ul>
-  <% items.each do |item| %>
+  <% user.list.each do |item| %>
     <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %>  --added <%= item.created_at.strftime("%c") %>  <button type="delete">Delete</button></li>
   <% end %>
 </ul>
