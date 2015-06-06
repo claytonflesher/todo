@@ -7,38 +7,33 @@ require_relative "lib/todo/user"
 enable :sessions
 
 db = Todo::Database.new
+db.setup
 
 helpers do
   include ERB::Util
 end
 
 before do
-  db.setup
   @user = db.load_user(session[:email])
 end
 
 get "/sign_up" do
   title = "To Do / Sign Up"
-  erb :sign_up, locals: {title: title, user: Todo::User.new}
+  erb :sign_up, locals: {title: title, user: Todo::User.new, db: db}
 end
 
 post "/sign_up" do
   title = "To Do / Sign Up"
   user = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
-  p params[:email]
-  if user.valid? && db.load_user(user.email)
-    redirect "/unavailable"
-  elsif user.valid?
+  if user.valid?
+    if db.valid?
+      erb :sign_up, locals: {title: title, user: user, db: db}
+    end
     db.save_user(user)
     redirect "/login"
   else
-    erb :sign_up, locals: {title: title, user: user}
+    erb :sign_up, locals: {title: title, user: user, db: db}
   end
-end
-
-get "/unavailable" do
-  title = "To Do / Unavailable"
-  erb :unavailable, locals: {title: title}
 end
 
 get "/login" do

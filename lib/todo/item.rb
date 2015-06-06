@@ -11,7 +11,7 @@ module Todo
     attr_reader :task, :notes, :created_at
 
     def new?
-      task.nil?
+      task.nil? && created_at != nil
     end
 
     def errors

@@ -1,5 +1,21 @@
 <h1>Sign Up!</h1>
 <form id="sign_up_form" action="/sign_up" method="POST">
+  <% unless user.valid? %>
+    <p>Your new account could not be saved because</p>
+    <ul>
+      <% user.errors.each do |error| %>
+        <li><%= h error %></li>
+      <% end %>
+  <% end %>
+    </ul>
+  <% unless db.valid?(user.email) %>
+    <p>Your new email could not be used because</p>
+    <ul>
+      <% db.errors(user.email).each do |error| %>
+        <li><%= h error %></li>
+      <% end %>
+    <% end %>
+    </ul>
   <input type="text" placeholder="email" name="email" value="<% h user.email %>"><br>
   <input type="password" placeholder="password" name="password" value="<% h user.password %>"><br>
   <input type="text" placeholder="First Name" name="first_name" value="<% h user.first_name %>"><br>

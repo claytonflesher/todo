@@ -9,6 +9,17 @@ module Todo
 
     attr_reader :db
 
+    def valid?(email)
+      check_if_email_available(email)
+    end
+
+    def errors(email)
+      errors = [ ]
+      unless check_if_email_available(email)
+        errors << "#{email} is already taken. Please login or use another."
+      end
+    end
+
     def setup
       db.transaction do
         db[:users] ||= {}
@@ -34,6 +45,14 @@ module Todo
     def load_user(email)
       db.transaction(READ_ONLY) do
         db[:users][email]
+      end
+    end
+    
+    private
+
+    def check_if_email_available(email)
+      db.transaction do
+        db[:users][email].nil?
       end
     end
   end
