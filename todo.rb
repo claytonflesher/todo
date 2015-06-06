@@ -78,7 +78,7 @@ post "/" do
     db.save_user(@user)
     redirect "/"
   else
-    erb :dashboard, locals: {title: title, item: item}
+    erb :dashboard, locals: {title: title, item: item, user: @user}
   end
 end
 
