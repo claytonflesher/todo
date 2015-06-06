@@ -1,7 +1,7 @@
 <h1>Sign Up!</h1>
 <form id="sign_up_form" action="/sign_up" method="POST">
   <% unless user.valid? %>
-    <p>Your new account could not be saved because</p>
+    <p>Please fill in all form fields</p>
     <ul>
       <% user.errors.each do |error| %>
         <li><%= h error %></li>

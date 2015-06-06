@@ -26,7 +26,7 @@ post "/sign_up" do
   title = "To Do / Sign Up"
   user = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
   if user.valid?
-    if db.valid?
+    if db.valid?(user.email)
       erb :sign_up, locals: {title: title, user: user, db: db}
     end
     db.save_user(user)

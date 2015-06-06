@@ -11,7 +11,7 @@ module Todo
     attr_reader :email, :password, :first_name, :last_name, :list
 
     def valid?
-      email =~ /\S/ && password != /\S/ && first_name != /\S/ && last_name != /\S/
+      email =~ /\S/ && password =~ /\S/ && first_name =~ /\S/ && last_name =~ /\S/
     end
 
     def errors
