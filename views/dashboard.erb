@@ -15,7 +15,7 @@
 </form>
 <ul>
   <% user.list.each do |item| %>
-    <li><a href="/items/<%= item.slug %>"><%= h item.task %></a>: <%= h item.notes %>  --added <%= item.created_at.strftime("%c") %>  <button type="delete">Delete</button></li>
+    <li><%= h item.task %>: <%= h item.notes %>  --added <%= item.created_at.strftime("%c") %>  <form id="delete" action="/delete/<%= h item.slug %>" method="POST"><input type="submit" value="Delete"></form></li>
   <% end %>
 </ul>
 <form id="logout" action="/logout" method="POST">

@@ -82,9 +82,12 @@ post "/" do
   end
 end
 
-post "/delete" do
-  item = parems[:item]
-  @user.delete_task(item)
+post "/delete/:id" do
+  @user.list.each do |item|
+    if item.slug == params['id']
+      @user.delete_task(item)
+    end
+  end
   db.save_user(@user)
   redirect "/"
 end
