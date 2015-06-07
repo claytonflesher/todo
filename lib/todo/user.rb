@@ -34,8 +34,8 @@ module Todo
       @list.unshift(item)
     end
 
-    def delete_task(item)
-      @list.delete(item)
+    def delete_task(task)
+      @list.delete( list.find { |item| item.slug == task } )
     end
   end
 end
