@@ -18,21 +18,27 @@ before do
 end
 
 get "/sign_up" do
-  title = "To Do / Sign Up"
-  erb :sign_up, locals: {title: title, user: Todo::User.new, db: db}
+  title  = "To Do / Sign Up"
+  errors = [ ]
+  erb :sign_up, locals: {title: title, user: Todo::User.new, db: db, errors: errors}
 end
 
 post "/sign_up" do
-  title = "To Do / Sign Up"
-  user = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
-  if user.valid?
-    if db.valid?(user.email)
-      db.save_user(user)
-      redirect "/login"
-    end
-      erb :sign_up, locals: {title: title, user: user, db: db}
+  title  = "To Do / Sign Up"
+  user   = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
+  errors = [ ]
+  unless user.valid?
+    errors.push(user.errors)
+    errors.flatten!
+  end
+  if db.load_user(user.email)
+    errors << "This email is not available. Please login or choose another."
+  end
+  if errors.any?
+    erb :sign_up, locals: {title: title, user: user, db: db, errors: errors}
   else
-    erb :sign_up, locals: {title: title, user: user, db: db}
+    db.save_user(user)
+    redirect "/login"
   end
 end
 
