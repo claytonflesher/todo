@@ -2,12 +2,18 @@
 <form id="sign_up_form" action="/sign_up" method="POST">
   <p>Please fill in all form fields</p>
   <ul>
-    <% if errors.any? %>
-      <% errors.each do |error| %>
+    <% errors.each do |error| %>
+      <li><%= h error %></li>
+  <% end %>
+  </ul>
+  <% unless db.valid?(user.email) %>
+    <p>Your new email could not be used because</p>
+    <ul>
+      <% db.errors(user.email).each do |error| %>
         <li><%= h error %></li>
       <% end %>
     <% end %>
-  </ul>
+    </ul>
   <input type="text" placeholder="email" name="email" value="<% h user.email %>"><br>
   <input type="password" placeholder="password" name="password" value="<% h user.password %>"><br>
   <input type="text" placeholder="First Name" name="first_name" value="<% h user.first_name %>"><br>
