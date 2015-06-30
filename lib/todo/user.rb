@@ -2,12 +2,12 @@ require 'bcrypt'
 
 module Todo
   class User
-    def initialize(email: nil, password: nil, first_name: nil, last_name: nil)
+    def initialize(email: nil, password: nil, first_name: nil, last_name: nil, list:)
       @email      = email
-      @password   = BCrypt::Password.create(password)
+      @password   = BCrypt::Password.new(password)
       @first_name = first_name
       @last_name  = last_name
-      @list       = [ ]
+      @list       = list
     end
 
     attr_reader :email, :password, :first_name, :last_name, :list

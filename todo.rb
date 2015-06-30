@@ -3,11 +3,11 @@ require "sinatra"
 require_relative "lib/todo/item"
 require_relative "lib/todo/database"
 require_relative "lib/todo/user"
+require_relative "lib/todo/new_user"
 
 enable :sessions
 
 db = Todo::Database.new
-db.setup
 
 helpers do
   include ERB::Util
@@ -20,12 +20,12 @@ end
 get "/sign_up" do
   title  = "To Do / Sign Up"
   errors = [ ]
-  erb :sign_up, locals: {title: title, user: Todo::User.new, db: db, errors: errors}
+  erb :sign_up, locals: {title: title, user: Todo::NewUser.new, db: db, errors: errors}
 end
 
 post "/sign_up" do
   title  = "To Do / Sign Up"
-  user   = Todo::User.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
+  user   = Todo::NewUser.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
   errors = [ ]
   unless user.valid?
     errors.push(user.errors)
