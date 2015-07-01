@@ -1,9 +1,9 @@
 require "bundler/setup"
 require "sinatra"
+require "bcrypt"
 require_relative "lib/todo/item"
 require_relative "lib/todo/database"
 require_relative "lib/todo/user"
-require_relative "lib/todo/new_user"
 
 enable :sessions
 
@@ -21,12 +21,12 @@ end
 get "/sign_up" do
   title  = "To Do / Sign Up"
   errors = [ ]
-  erb :sign_up, locals: {title: title, user: Todo::NewUser.new, db: db, errors: errors}
+  erb :sign_up, locals: {title: title, user: Todo::User.new, db: db, errors: errors}
 end
 
 post "/sign_up" do
   title  = "To Do / Sign Up"
-  user   = Todo::NewUser.new(email: params[:email], password: params[:password], first_name: params[:first_name], last_name: params[:last_name])
+  user   = Todo::User.new(email: params[:email], password: BCrypt::Password.create(params[:password]), first_name: params[:first_name], last_name: params[:last_name])
   errors = [ ]
   unless user.valid?
     errors.push(user.errors)
@@ -81,16 +81,14 @@ post "/" do
   title = "To Do / Dashboard"
   item = Todo::Item.new(task: params[:task], notes: params[:notes])
   if item.valid?
-    @user.add_task(item)
-    db.save_user(@user)
+    db.save_item(item, @user)
     redirect "/"
   else
     erb :dashboard, locals: {title: title, item: item, user: @user}
   end
 end
 
-post "/delete/:slug" do
-  @user.delete_task(params['slug'])
-  db.save_user(@user)
+post "/delete/:id" do
+  db.delete_task(params['id'])
   redirect "/"
 end
