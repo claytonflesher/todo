@@ -2,13 +2,15 @@ require "time"
 
 module Todo
   class Item
-    def initialize(task: nil, notes: "", created_at: Time.now)
+
+    def initialize(task: nil, notes: "", created_at: Time.now, id: nil)
       @task       = task
       @notes      = notes
       @created_at = created_at
+      @id         = id
     end
 
-    attr_reader :task, :notes, :created_at
+    attr_reader :task, :notes, :created_at, :id
 
     def new?
       task.nil? && created_at != nil

@@ -6,6 +6,8 @@ GEM
     rack (1.6.1)
     rack-protection (1.5.3)
       rack
+    shotgun (0.9)
+      rack (>= 1.0)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -18,4 +20,5 @@ PLATFORMS
 DEPENDENCIES
   bcrypt
   pg
+  shotgun
   sinatra
