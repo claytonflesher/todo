@@ -8,6 +8,7 @@ require_relative "lib/todo/new_user"
 enable :sessions
 
 db = Todo::Database.new
+db.setup
 
 helpers do
   include ERB::Util
