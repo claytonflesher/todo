@@ -10,10 +10,6 @@ module Todo
     def initialize
       @db = PG.connect(dbname: 'todo')
       @db.type_map_for_results = PG::BasicTypeMapForResults.new(@db)
-      setup
-      db.prepare("new_user", "INSERT INTO users (email, password, first_name, last_name) VALUES ($1, $2, $3, $4);")
-      db.prepare("load_items", "SELECT * FROM items WHERE email = $1;")
-      db.prepare("emails", "SELECT email FROM users WHERE email = $1;")
     end
 
     attr_reader :db
@@ -48,17 +44,11 @@ module Todo
     end
 
     def save_user(user)
-      db.exec_prepared("new_user", [user.email, user.password, user.first_name, user.last_name])
-      if user.list != []
-        user.list.each do |item|
-          db.exec_prepared("new_item", [user.email, item.task, item.notes, item.created_at.to_i])
-        end
-      end
+      db.exec("INSERT INTO users (email, password, first_name, last_name) VALUES ($1, $2, $3, $4);", [user.email, user.password, user.first_name, user.last_name])
     end
 
     def authenticate(email:, password:)
       user_data = find_user_by_email(email)
-
       unless user_data[:email] == nil
         user = User.new(email: user_data[:email], password: user_data[:password], first_name: user_data[:first_name], last_name: user_data[:last_name], list: [ ])
         if user.email == email && BCrypt::Password.new(user.password) == password
@@ -66,19 +56,17 @@ module Todo
           return user
         end
       end
-
       nil
     end
 
     def save_item(item, user)
       db.exec("INSERT INTO items (email, task, notes, created_at) VALUES ($1, $2, $3, $4)",
               [ user.email, item.task, item.notes, item.created_at ]
-      )
+             )
     end
 
     def load_user(email)
       user_data = find_user_by_email(email)
-
       if user_data.empty?
         nil
       else
@@ -96,7 +84,7 @@ module Todo
 
     def check_if_email_available(email)
       user_data = {:email => nil }
-      db.exec_prepared("emails", [email]).each { |result|
+      db.exec("SELECT email FROM users WHERE email = $1;", [email]).each { |result|
         result.each { |line|
           user_data[line[0].to_sym] = line[1]
         }
@@ -105,13 +93,13 @@ module Todo
     end
 
     def load_items_for_user(user)
-      db.exec_prepared("load_items", [user.email]).each { |result|
-          user.add_task(Item.new(
-            task: result["task"],
-            notes: result["notes"],
-            created_at: result["created_at"],
-            id: result["id"])
-          )
+      db.exec("SELECT * FROM items WHERE email = $1;", [user.email]).each { |result|
+        user.add_task(Item.new(
+          task: result["task"],
+          notes: result["notes"],
+          created_at: result["created_at"],
+          id: result["id"])
+                     )
       }
     end
 
@@ -125,6 +113,5 @@ module Todo
       }
       user_data
     end
-
   end
 end
