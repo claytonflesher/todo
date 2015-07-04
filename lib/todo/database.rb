@@ -36,7 +36,7 @@ module Todo
 
       db.exec("CREATE TABLE IF NOT EXISTS items (
               id serial primary key,
-              email text,
+              user_id integer,
               task text,
               notes text,
               created_at timestamp without time zone );"
@@ -50,7 +50,7 @@ module Todo
     def authenticate(email:, password:)
       user_data = find_user_by_email(email)
       unless user_data[:email] == nil
-        user = User.new(email: user_data[:email], password: user_data[:password], first_name: user_data[:first_name], last_name: user_data[:last_name], list: [ ])
+        user = User.new(email: user_data[:email], password: user_data[:password], first_name: user_data[:first_name], last_name: user_data[:last_name], id: user_data[:id], list: [ ])
         if user.email == email && BCrypt::Password.new(user.password) == password
           load_items_for_user(user)
           return user
@@ -60,8 +60,8 @@ module Todo
     end
 
     def save_item(item, user)
-      db.exec("INSERT INTO items (email, task, notes, created_at) VALUES ($1, $2, $3, $4)",
-              [ user.email, item.task, item.notes, item.created_at ]
+      db.exec("INSERT INTO items (user_id, task, notes, created_at) VALUES ($1, $2, $3, $4)",
+              [ user.id, item.task, item.notes, item.created_at ]
              )
     end
 
@@ -70,7 +70,7 @@ module Todo
       if user_data.empty?
         nil
       else
-        user = User.new(email: user_data[:email], password: user_data[:password], first_name: user_data[:first_name], last_name: user_data[:last_name], list: [] )
+        user = User.new(email: user_data[:email], password: user_data[:password], first_name: user_data[:first_name], last_name: user_data[:last_name], id: user_data[:id], list: [] )
         load_items_for_user(user)
         user
       end
@@ -93,14 +93,14 @@ module Todo
     end
 
     def load_items_for_user(user)
-      db.exec("SELECT * FROM items WHERE email = $1;", [user.email]).each { |result|
-        user.add_task(Item.new(
-          task: result["task"],
-          notes: result["notes"],
-          created_at: result["created_at"],
-          id: result["id"])
-                     )
-      }
+        db.exec("SELECT * FROM items WHERE user_id = $1;", [user.id]).each { |result|
+          user.add_task(Item.new(
+            task: result["task"],
+            notes: result["notes"],
+            created_at: result["created_at"],
+            id: result["id"])
+                       )
+        }
     end
 
     def find_user_by_email(email)
@@ -110,6 +110,7 @@ module Todo
         user_data[:password]   = result["password"]
         user_data[:last_name]  = result["last_name"]
         user_data[:first_name] = result["first_name"]
+        user_data[:id]         = result["id"]
       }
       user_data
     end

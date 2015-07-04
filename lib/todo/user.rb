@@ -1,14 +1,15 @@
 module Todo
   class User
-    def initialize(email: nil, password: nil, first_name: nil, last_name: nil, list: [ ])
+    def initialize(email: nil, password: nil, first_name: nil, last_name: nil, id: nil, list: [ ])
       @email      = email
       @password   = password
       @first_name = first_name
       @last_name  = last_name
       @list       = list
+      @id         = id
     end
 
-    attr_reader :email, :password, :first_name, :last_name, :list
+    attr_reader :email, :password, :first_name, :last_name, :id, :list
 
     def valid?
       email =~ /\S/ && password =~ /\S/ && first_name =~ /\S/ && last_name =~ /\S/
