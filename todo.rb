@@ -1,27 +1,27 @@
+require "sequel"
+DB = Sequel.postgres('todo')
+Sequel::Model.plugin :validation_helpers
+
 require "bundler/setup"
 require "sinatra"
 require "bcrypt"
-require_relative "lib/todo/item"
-require_relative "lib/todo/database"
-require_relative "lib/todo/user"
+require_relative "models/item"
+require_relative "models/user"
 
 enable :sessions
-
-db = Todo::Database.new
-db.setup
+set :session_secret, ""
 
 helpers do
   include ERB::Util
 end
 
 before do
-  @user = db.load_user(session[:email])
+  @user = Todo::User.find(:email => session[:email])
 end
 
 get "/sign_up" do
   title  = "To Do / Sign Up"
-  errors = [ ]
-  erb :sign_up, locals: {title: title, user: Todo::User.new, db: db, errors: errors}
+  erb :sign_up, locals: {title: title, user: Todo::User.new, errors: []}
 end
 
 post "/sign_up" do
@@ -29,16 +29,13 @@ post "/sign_up" do
   user   = Todo::User.new(email: params[:email], password: BCrypt::Password.create(params[:password]), first_name: params[:first_name], last_name: params[:last_name])
   errors = [ ]
   unless user.valid?
-    errors.push(user.errors)
+    errors.push(user.errors.values)
     errors.flatten!
-  end
-  if db.load_user(user.email)
-    errors << "This email is not available. Please login or choose another."
   end
   if errors.any?
     erb :sign_up, locals: {title: title, user: user, db: db, errors: errors}
   else
-    db.save_user(user)
+    user.save
     redirect "/login"
   end
 end
@@ -50,8 +47,8 @@ end
 
 post "/login" do
   title = "To Do / Login"
-  user = db.authenticate(email: params[:email], password: params[:password])
-  if user
+  user = Todo::User.find(email: params[:email])
+  if user && valid_password?(user, params[:password])
     session[:email] = user.email
     redirect "/"
   else
@@ -81,7 +78,7 @@ post "/" do
   title = "To Do / Dashboard"
   item = Todo::Item.new(task: params[:task], notes: params[:notes])
   if item.valid?
-    db.save_item(item, @user)
+    @user.add_task(item)
     redirect "/"
   else
     erb :dashboard, locals: {title: title, item: item, user: user}
@@ -89,6 +86,10 @@ post "/" do
 end
 
 post "/delete/:id" do
-  db.delete_task(params['id'])
+  Todo::Item[params['id']].destroy
   redirect "/"
+end
+
+def valid_password?(user, password)
+  BCrypt::Password.new(user.password) == password
 end

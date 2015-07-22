@@ -6,14 +6,6 @@
       <li><%= h error %></li>
   <% end %>
   </ul>
-  <% unless db.valid?(user.email) %>
-    <p>Your new email could not be used because</p>
-    <ul>
-      <% db.errors(user.email).each do |error| %>
-        <li><%= h error %></li>
-      <% end %>
-    <% end %>
-    </ul>
   <input type="text" placeholder="email" name="email" value="<% h user.email %>"><br>
   <input type="password" placeholder="password" name="password" value="<% h user.password %>"><br>
   <input type="text" placeholder="First Name" name="first_name" value="<% h user.first_name %>"><br>
