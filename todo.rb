@@ -28,12 +28,16 @@ post "/sign_up" do
   title  = "To Do / Sign Up"
   user   = Todo::User.new(email: params[:email], password: BCrypt::Password.create(params[:password]), first_name: params[:first_name], last_name: params[:last_name])
   errors = [ ]
+  if user.empty_fields?
+    errors.push(user.empties)
+    errors.flatten!
+  end
   unless user.valid?
     errors.push(user.errors.values)
     errors.flatten!
   end
   if errors.any?
-    erb :sign_up, locals: {title: title, user: user, db: db, errors: errors}
+    erb :sign_up, locals: {title: title, user: user, errors: errors}
   else
     user.save
     redirect "/login"
