@@ -28,10 +28,6 @@ post "/sign_up" do
   title  = "To Do / Sign Up"
   user   = Todo::User.new(email: params[:email], password: BCrypt::Password.create(params[:password]), first_name: params[:first_name], last_name: params[:last_name])
   errors = [ ]
-  if user.empty_fields?
-    errors.push(user.empties)
-    errors.flatten!
-  end
   unless user.valid?
     errors.push(user.errors.values)
     errors.flatten!

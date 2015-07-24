@@ -9,23 +9,16 @@ module Todo
     
     def validate
       validates_unique :email, message: "Email is unavailable."
+      validates_presence :email, message: "Must include an email."
+      errors.add(:password, "Must include a password.") if BCrypt::Password.new(password) == ""
+      validates_presence :first_name, message: "Must include a first name"
+      validates_presence :last_name, message: "Must include a last name."
     end
 
     def add_task(item)
       item.user_id    = self.id
       item.save
       reload
-    end
-
-    def empty_fields?
-      @empties = []
-      empties << "Must include an email" if self.email == ""
-      empties << "Must include a password" if BCrypt::Password.new(self.password) == ""
-      empties << "Must include a first name" if self.first_name == ""
-      empties << "Must include a last name" if self.last_name == ""
-      if empties.any?
-        empties
-      end
     end
   end
 end
